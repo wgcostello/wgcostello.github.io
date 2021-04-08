@@ -4,7 +4,6 @@ var dimensions = {
   width: $(window).width(),
   height: $(window).height() };
 
-
 var minDimension = Math.min(dimensions.width, dimensions.height);
 
 var lineW = 1 / 180 * minDimension;
@@ -113,8 +112,6 @@ let colours = [
 '#BEF1FF',
 '#F7A3BA']];
 
-
-
 function runMatter() {
   // module aliases
   var Engine = Matter.Engine,
@@ -143,8 +140,6 @@ function runMatter() {
       wireframes: false,
       background: 'transparent' } });
 
-
-
   // create runner
   var runner = Runner.create();
 
@@ -160,11 +155,7 @@ function runMatter() {
   {
     render: {
       visible: false
-      // fillStyle: `rgb(10,10,10)`,
-      // strokeStyle: `rgb(10,10,10)`,
-      // lineWidth: 0
     },
-    // isStatic: true,
     plugin: {
       attractors: [
       function (bodyA, bodyB) {
@@ -173,12 +164,10 @@ function runMatter() {
           y: (bodyA.position.y - bodyB.position.y) * 1e-8 };
 
       }],
-
       wrap: {
         min: {
           x: 0,
           y: 0 },
-
         max: {
           x: dimensions.width,
           y: dimensions.height } } } });
@@ -191,7 +180,6 @@ function runMatter() {
   0,
   0,
   0.2 * window.innerHeight,
-  // vhToPixels(4),
   {
     density: 0.5,
     render: {
@@ -199,19 +187,6 @@ function runMatter() {
       fillStyle: '#383838',
       strokeStyle: '#383838',
       lineWidth: 0 }
-
-    // plugin: {
-    //   wrap: {
-    //     min: {
-    //       x: 0,
-    //       y: 0
-    //     },
-    //     max: {
-    //       x: dimensions.width,
-    //       y: dimensions.height
-    //     }
-    //   }
-    // }
   });
 
   // add the disruptor to the world
@@ -231,74 +206,10 @@ function runMatter() {
     for (j = 0; j < 8; j++) {
       var fill = colours[i][j];
 
-      console.log(fill);
-      console.log(fill["Hue"]);
-      console.log(fill["Saturation"]);
-      console.log(fill["Lightness"]);
-
       if (i % 2 == 0) {
-        hexagons.push(Bodies.polygon(startingX + hexWidth * j,
-        startingY + radius * 1.5 * i,
-        6, radius, {
-          friction: 0,
-          frictionAir: 0,
-          frictionStatic: 0,
-          density: 0.5,
-          render: {
-            fillStyle: fill,
-            strokeStyle: '#A5B3B3',
-            lineWidth: lineW },
-
-          restitution: 0,
-          plugin: {
-            // attractors: [
-            //   function(bodyA, bodyB) {
-            //     return {
-            //       x: (bodyA.position.x - bodyB.position.x) * 1e-9,
-            //       y: (bodyA.position.y - bodyB.position.y) * 1e-9,
-            //     };
-            //   }
-            // ],
-            wrap: {
-              min: {
-                x: 0,
-                y: 0 },
-
-              max: {
-                x: dimensions.width,
-                y: dimensions.height } } } }));
-
+        hexagons.push(newHexagon(Bodies, startingX + hexWidth * j, startingY + radius * 1.5 * i, radius, fill, lineW));
       } else {
-        hexagons.push(Bodies.polygon(startingX - hexWidth / 2 + hexWidth * j,
-        startingY + radius * 1.5 * i,
-        6, radius, {
-          friction: 0,
-          frictionAir: 0,
-          frictionStatic: 0,
-          density: 0.5,
-          render: {
-            fillStyle: fill,
-            strokeStyle: '#A5B3B3',
-            lineWidth: lineW },
-
-          restitution: 0,
-          plugin: {
-            // attractors: [
-            //   function(bodyA, bodyB) {
-            //     return {
-            //       x: (bodyA.position.x - bodyB.position.x) * 1e-9,
-            //       y: (bodyA.position.y - bodyB.position.y) * 1e-9,
-            //     };
-            //   }
-            // ],
-            wrap: {
-              min: {
-                x: 0,
-                y: 0 },
-
-              max: {
-                x: dimensions.width,
-                y: dimensions.height } } } }));
+        hexagons.push(newHexagon(Bodies, startingX - hexWidth / 2 + hexWidth * j, startingY + radius * 1.5 * i, radius, fill, lineW));
       }
     }
   };
@@ -341,6 +252,28 @@ function runMatter() {
   Matter.Runner.run(runner, engine);
   Matter.Render.run(render);
   return data;
+};
+
+function newHexagon(Bodies, x, y, radius, fill, lineW) {
+  var hexagon = Bodies.polygon(x, y, 6, radius, {
+      friction: 0,
+      frictionAir: 0,
+      frictionStatic: 0,
+      density: 0.5,
+      render: {
+        fillStyle: fill,
+        strokeStyle: '#A5B3B3',
+        lineWidth: lineW },
+      restitution: 0,
+      plugin: {
+        wrap: {
+          min: {
+            x: 0,
+            y: 0 },
+          max: {
+            x: dimensions.width,
+            y: dimensions.height } } } });
+  return hexagon;
 };
 
 function debounce(func, wait, immediate) {
